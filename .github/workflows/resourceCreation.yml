@@ -1,0 +1,45 @@
+name: provision the eks resources
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "target environment name"
+        required: true
+jobs:
+  deploy_source:
+    name: terraform deployment
+    runs-on: ubuntu-latest
+    env:
+      bucket: petclinic-infra-bucket
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.8
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: terraform initial
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.bucket }}" \
+            -backend-config="key=${{ github.event.inputs.name }}/tfstate.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend=true
+
+      - name: terraform plan
+        run: terraform  plan -var-file=_config_prod.tfvars
+
+      - name: terraform apply
+        run: terraform  apply -var-file=_config_prod.tfvars -auto-approve
+        
+      # - name: terraform destroy
+      #   run: terraform  destroy -var-file=_config_prod.tfvars -auto-approve
