@@ -1,15 +1,19 @@
+#### petclinic microservice  deployment proocess
+---
 
-Download the credentials
+**Download the eks credentials**
 
 ```bash
 
 aws eks update-kubeconfig --region us-east-1 --name prod-dev
 
 ```
+
 after terraform resource creation We must first validate the rds mysql database connectivity. In this case, I'm making use of the private rds database. We are unable to gain access from outside the cluster. As a consequence, the internal connectivity validation process is required.
 
 ```yaml
 ---
+# filename: mysql.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,17 +47,22 @@ spec:
 
 following deployment Enter the container and validate connctivity use  their credentials.
 
+**validation commands**
+
 ```bash
 
+kubectl create -f mysql.yml
 kubectl get po
 wordpress-mysql-cd69497df-988gp
 kubectl exec -ti wordpress-mysql-cd69497df-988gp bash
 mysql -h petclinics.crhzreu3chpm.us-east-1.rds.amazonaws.com -u petclinic -p
 Password: 
 
+# after validate caonnectivity
+kubectl delete -f mysql.yml
 ```
 
-_create the ingress-nginx controller_
+**create the ingress-nginx controller**
 
 ```bash
 
@@ -61,7 +70,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 ```
 
-certificate manager
+**certificate manager**
 
 ```bash
 
@@ -74,9 +83,7 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --set i
 
 ```
 
-
-
-deployment file preparation with certificate manager 
+**Deployment file preparation with certificate manager**
 
 ```bash
 
@@ -195,10 +202,9 @@ spec:
 
 ```
 
+**Docker file preparation**
 
-Docker file preparatio
-
-```Dockerfeil
+```Dockerfile
 
 FROM openjdk:11 as build
 WORKDIR /apps
@@ -210,6 +216,5 @@ WORKDIR /app
 COPY --from=build /apps/target/*.jar .
 EXPOSE 8080
 CMD ["java","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
-
 
 ```
