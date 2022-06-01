@@ -6,19 +6,52 @@ Download the credentials
 aws eks update-kubeconfig --region us-east-1 --name prod-dev
 
 ```
+after terraform resource creation We must first validate the rds mysql database connectivity. In this case, I'm making use of the private rds database. We are unable to gain access from outside the cluster. As a consequence, the internal connectivity validation process is required.
 
-`Requirements`
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "petclinic"
+        ports:
+        - containerPort: 3306
+          name: mysql
 
-* 1. kubectl
-* 2. helm
-* 3. docker engine
+```
 
-`kubernetes certificate attachement`
+following deployment Enter the container and validate connctivity use  their credentials.
 
-* Certificat manager instal via helm charts
-* Domain name purchase
+```bash
 
-    * Domain fourtimes.ml
+kubectl get po
+wordpress-mysql-cd69497df-988gp
+kubectl exec -ti wordpress-mysql-cd69497df-988gp bash
+mysql -h petclinics.crhzreu3chpm.us-east-1.rds.amazonaws.com -u petclinic -p
+Password: 
+
+```
 
 _create the ingress-nginx controller_
 
