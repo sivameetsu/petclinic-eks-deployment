@@ -83,7 +83,20 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --set i
 
 ```
 
-As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources` 
+As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources/application-mysql.properties` 
+
+The file 'application-mysql.properties' should look like this.
+
+```properties
+# database init, supports mysql too
+database=mysql
+spring.datasource.url=${MYSQL_URL:jdbc:mysql://petclinics.crhzreu3chpm.us-east-1.rds.amazonaws.com/petclinic}
+spring.datasource.username=${MYSQL_USER:petclinic}
+spring.datasource.password=${MYSQL_PASS:petclinic}
+# SQL is written to be idempotent so this is safe
+spring.sql.init.mode=always
+
+```
 
 
 **Docker file preparation**
