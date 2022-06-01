@@ -247,4 +247,6 @@ _results_
 
 In this case, I'm using a freenom domain in conjunction with a certificate manager to obtain letencrypt SSL.
 
+open your browser https://petclinic.fourtime.ml
+
 ![image](https://user-images.githubusercontent.com/61459314/171373685-c32f5c87-1c12-4b90-aa2b-710024a794f6.png)
