@@ -83,6 +83,35 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --set i
 
 ```
 
+As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources` 
+
+
+**Docker file preparation**
+
+```Dockerfile
+
+FROM openjdk:11 as build
+WORKDIR /apps
+COPY . .
+RUN ./mvnw package
+# RUN ./mvnw package spring.profiles.active=mysql
+
+FROM openjdk:11
+WORKDIR /app
+COPY --from=build /apps/target/*.jar .
+EXPOSE 8080
+CMD ["java","-Dspring.profiles.active=mysql","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
+
+```
+
+**Docker image preparation**
+
+```bash
+docker build -t jjino/petclinic:v1.0 .
+docker push jjino/petclinic:v1.0
+
+```
+
 **Deployment file preparation with certificate manager**
 
 ```bash
@@ -117,9 +146,9 @@ spec:
     spec:
       containers:
         - name: web
-          image: nginx
+          image: jjino/petclinic:v1.0
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               protocol: TCP
 ---
 apiVersion: v1
@@ -134,7 +163,7 @@ spec:
     version: v1
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -159,7 +188,7 @@ spec:
           service:
             name: web-service
             port:
-              number: 80
+              number: 8080
         path: /
         pathType: ImplementationSpecific
 ---
@@ -201,23 +230,8 @@ spec:
 
 ```
 
-As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources` 
+_results_
 
+In this case, I'm using a freenom domain in conjunction with a certificate manager to obtain letencrypt SSL.
 
-**Docker file preparation**
-
-```Dockerfile
-
-FROM openjdk:11 as build
-WORKDIR /apps
-COPY . .
-RUN ./mvnw package
-# RUN ./mvnw package spring.profiles.active=mysql
-
-FROM openjdk:11
-WORKDIR /app
-COPY --from=build /apps/target/*.jar .
-EXPOSE 8080
-CMD ["java","-Dspring.profiles.active=mysql","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
-
-```
+![image](https://user-images.githubusercontent.com/61459314/171373685-c32f5c87-1c12-4b90-aa2b-710024a794f6.png)
