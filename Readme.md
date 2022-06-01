@@ -199,8 +199,10 @@ spec:
   dnsNames:
     - petclinic.fourtimes.ml
 
-
 ```
+
+As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources` 
+
 
 **Docker file preparation**
 
@@ -210,11 +212,12 @@ FROM openjdk:11 as build
 WORKDIR /apps
 COPY . .
 RUN ./mvnw package
+# RUN ./mvnw package spring.profiles.active=mysql
 
 FROM openjdk:11
 WORKDIR /app
 COPY --from=build /apps/target/*.jar .
 EXPOSE 8080
-CMD ["java","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
+CMD ["java","-Dspring.profiles.active=mysql","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
 
 ```
