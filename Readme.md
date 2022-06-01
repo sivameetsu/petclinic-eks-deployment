@@ -161,3 +161,22 @@ spec:
 
 
 ```
+
+
+Docker file preparatio
+
+```Dockerfeil
+
+FROM openjdk:11 as build
+WORKDIR /apps
+COPY . .
+RUN ./mvnw package
+
+FROM openjdk:11
+WORKDIR /app
+COPY --from=build /apps/target/*.jar .
+EXPOSE 8080
+CMD ["java","-jar","spring-petclinic-2.7.0-SNAPSHOT.jar"]
+
+
+```
