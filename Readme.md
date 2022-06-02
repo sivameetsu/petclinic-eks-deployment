@@ -21,6 +21,8 @@ We have currently configured the manual trigger pipeline. This pipeline can be u
 
 ```bash
 
+sudo apt install awscli -y
+aws configure
 aws eks update-kubeconfig --region us-east-1 --name prod-dev
 
 ```
