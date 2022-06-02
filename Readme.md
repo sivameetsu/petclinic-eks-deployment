@@ -99,7 +99,7 @@ helm upgrade cert-manager jetstack/cert-manager --namespace cert-manager --set i
 
 ```
 
-As per the repostory source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources/application-mysql.properties` 
+As per the repository source code `https://github.com/spring-projects/spring-petclinic` you should replace mysql credentials under `main/resources/application-mysql.properties` 
 
 The file 'application-mysql.properties' should look like this.
 
