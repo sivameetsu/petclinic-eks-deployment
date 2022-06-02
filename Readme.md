@@ -27,7 +27,7 @@ aws eks update-kubeconfig --region us-east-1 --name prod-dev
 
 after terraform resource creation We must first validate the rds mysql database connectivity. In this case, I'm making use of the private rds database. We are unable to gain access from outside the cluster. As a consequence, the internal connectivity validation process is required.
 
-```yaml
+```yml
 ---
 # filename: mysql.yml
 apiVersion: apps/v1
@@ -88,7 +88,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 **certificate manager**
 
-```bash
+```helm
 
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
@@ -143,7 +143,7 @@ docker push jjino/petclinic:v1.0
 
 **Deployment file preparation with certificate manager**
 
-```bash
+```yml
 
 ---
 apiVersion: apps/v1
