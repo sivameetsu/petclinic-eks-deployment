@@ -1,6 +1,22 @@
 #### petclinic microservice  deployment proocess
 ---
 
+
+**resource creation use github action**
+
+In this use case, we are preparing the CICD pipeline by using github actions to deliver all resources.
+
+**how to run the pipeline?**
+
+We have currently configured the manual trigger pipeline. This pipeline can be used to create environment-based resources.
+
+![image](https://user-images.githubusercontent.com/61459314/171553067-330c0ad3-3912-4ba5-a3e2-658ab1c519c1.png)
+
+**pipeline success status**
+
+![image](https://user-images.githubusercontent.com/61459314/171552903-fcabeddd-4c12-46c1-a486-c7457f4e120e.png)
+
+
 **Download the eks credentials**
 
 ```bash
